@@ -7,7 +7,7 @@ Sybase database layer for Seneca framework
 
 Current Version: 0.0.1
 
-Tested on: Node 0.10.33, Seneca 0.5.21
+Tested on: Node 0.10.32, Seneca 0.5.21
 
 Tests
 -----
