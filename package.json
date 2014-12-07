@@ -21,7 +21,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "seneca": "~0.5.15"
+    "seneca": "~0.5.15",
+    "sqlanywhere": "1.0.3"
   },
   "devDependencies": {
     "async": "*",
