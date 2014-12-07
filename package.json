@@ -1,0 +1,31 @@
+{
+  "name": "seneca-sybase-store",
+  "version": "0.0.1",
+  "description": "Sybase SQL Anywhere database layer for Seneca framework",
+  "main": "sybase-store.js",
+  "scripts": {
+    "test": "mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/marcopiraccini/seneca-sybase-store.git"
+  },
+  "keywords": [
+    "seneca",
+    "sybase",
+    "plugin",
+    "sqlanywhere"
+  ],
+  "author": "Marco Piraccini",
+  "contributors": [
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "seneca": "~0.5.15"
+  },
+  "devDependencies": {
+    "async": "*",
+    "mocha": "^2.0.0",
+    "seneca-store-test": "^0.2.2"
+  }
+}
