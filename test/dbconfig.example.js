@@ -5,8 +5,5 @@
  * http://dcx.sybase.com/index.html#sa160/en/dbadmin/da-conparm.html
  */
 module.exports = {
-  Server: 'testdb',
-  DatabaseName: 'testdb',
-  UserID: 'seneca',
-  Password: 'seneca'
+  connection : 'DRIVER={FreeTDS};SERVERNAME=senecatest;DATABASE=senecatest;UID=senecatest;PWD=senecatest;'
 };

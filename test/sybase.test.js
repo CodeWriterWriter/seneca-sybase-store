@@ -21,10 +21,12 @@ if (fs.existsSync(__dirname + '/../test/dbconfig.mine.js')) {
 
 console.log(dbConfig);
 
+si.use(require('..'), dbConfig);
+
 si.__testcount = 0;
 var testcount = 0;
 
-describe('sybase', function () {
+describe('Sybase store tests', function () {
   it('basic', function (done) {
     testcount++;
     shared.basictest(si, done);
