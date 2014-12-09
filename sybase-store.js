@@ -535,4 +535,20 @@ module.exports = function(opts) {
     }
 
     return ent.make$(entp);
-  }
+  };
+
+  var fixquery = function (entp, q) {
+    var qq = {};
+
+    for (var qp in q) {
+      if (!qp.match(/\$$/)) {
+        qq[qp] = q[qp];
+      }
+    }
+
+    if (_.isFunction(qq.id)) {
+      delete qq.id;
+    }
+
+    return qq;
+  };
