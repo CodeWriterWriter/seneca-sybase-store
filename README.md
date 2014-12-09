@@ -25,12 +25,9 @@ isql -S SERVERNAME -U sa -i schema.sql
 ```
 DRIVER={FreeTDS};SERVERNAME=XXXX;DATABASE=senecatest;UID=senecatest;PWD=senecatest;
 ```
-(note that in this case the SERVERNAME is the ODBC Server Name, not the ASE Server Name)
+  Note that in this case the SERVERNAME is the ODBC Server Name, not the ASE Server Name.
 
-* Execute the tests using
-```
-npm test
-```
+* Execute the tests using `npm test` as usual
 
 Notes
 -----
