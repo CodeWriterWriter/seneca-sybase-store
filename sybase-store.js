@@ -8,7 +8,7 @@ var assert = require("assert");
 var _ = require('lodash');
 var uuid = require('node-uuid');
 var moment = require("moment");
-var relationalstore = require('./lib/relational-util')
+
 
 var NAME = "sybase-store";
 var MIN_WAIT = 16;
@@ -313,7 +313,7 @@ module.exports = function(opts) {
      */
     var whereargs = function(qent, q) {
       var w = {};
-      var qok = relationalstore.fixquery(qent, q);
+      var qok = fixquery(qent, q);
 
       for (var p in qok) {
         w[p] = qok[p];
