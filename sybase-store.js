@@ -117,178 +117,175 @@ module.exports = function(opts) {
       });
     }
 
+    /**
+     * the store interface returned to seneca
+     */
+    var store = {
+      name: NAME,
+
       /**
-       * the store interface returned to seneca
+       * close the connection
+       *
+       * params
+       * cmd - optional close command parameters
+       * cb - callback
        */
-      var store = {
-        name: NAME,
-
-        /**
-         * close the connection
-         *
-         * params
-         * cmd - optional close command parameters
-         * cb - callback
-         */
-        close: function(cmd, cb) {
-          assert(cb);
-          db.close(function(err) {
-            if (err) {
-              seneca.fail({
-                code: 'connection/end',
-                store: NAME,
-                error: err
-              }, cb);
-            }
-            cb();
-          });
-        },
-
-        /**
-         * save the data as specified in the entitiy block on the arguments object
-         *
-         * params
-         * args - of the form { ent: { id: , ..entitiy data..} }
-         * cb - callback
-         */
-        save: function(args, cb) {
-          assert(args);
-          assert(cb);
-          assert(args.ent);
-
-          var ent = args.ent;
-          var update = !!ent.id;
-          var stmnt;
-
-          if (!ent.id) {
-            if (ent.id$) {
-              ent.id = ent.id$;
-            } else {
-              ent.id = uuid();
-            }
+      close: function(cmd, cb) {
+        assert(cb);
+        db.close(function(err) {
+          if (err) {
+            seneca.fail({
+              code: 'connection/end',
+              store: NAME,
+              error: err
+            }, cb);
           }
+          cb();
+        });
+      },
 
+      /**
+       * save the data as specified in the entitiy block on the arguments object
+       *
+       * params
+       * args - of the form { ent: { id: , ..entitiy data..} }
+       * cb - callback
+       */
+      save: function(args, cb) {
+        assert(args);
+        assert(cb);
+        assert(args.ent);
 
-          if (update) {
-            stmnt = updateStatement(ent);
-            db.query(stmnt, function(err, result) {
-              if (!error(args, err, cb)) {
-                seneca.log(args.tag$, 'save/update', result);
-                cb(null, ent);
-              }
-            });
+        var ent = args.ent;
+        var update = !!ent.id;
+        var stmnt;
 
+        if (!ent.id) {
+          if (ent.id$) {
+            ent.id = ent.id$;
           } else {
-            stmnt = insertStatement(ent);
-            db.query(stmnt, function(err, result) {
-              if (!error(args, err, cb)) {
-                seneca.log(args.tag$, 'save/insert', result, stmnt);
-                cb(null, ent);
-              } else {
-                seneca.log.error('save/update',err);
-              }
-            });
+            ent.id = uuid();
           }
-        },
+        }
 
-        /**
-         * load first matching item based on id
-         * params
-         * args - of the form { ent: { id: , ..entitiy data..} }
-         * cb - callback
-         */
-        load: function(args, cb) {
-          assert(args);
-          assert(cb);
-          assert(args.qent);
-          assert(args.q);
 
-          var q = _.clone(args.q);
-          var qent = args.qent;
-          q.limit$ = 1;
-
-          var query = selectStatement(qent, q);
-
-          db.query(query, function(err, res, fields) {
-
+        if (update) {
+          stmnt = updateStatement(ent);
+          db.query(stmnt, function(err, result) {
             if (!error(args, err, cb)) {
-              var ent = makeent(qent, res[0]);
-              seneca.log(args.tag$, 'load', ent);
+              seneca.log(args.tag$, 'save/update', result);
               cb(null, ent);
             }
           });
-        },
 
-        list: function (args, cb) {
-
-          var qent = args.qent;
-          var q = args.q;
-          var list = [];
-
-          var query = selectStatement(qent, q);
-
-          db.query(query, function (err, res) {
-
-            if (!error(query, err, cb)) {
-              res.forEach(function (row) {
-                var ent = makeent(qent, row);
-
-                list.push(ent);
-              });
-              seneca.log(args.tag$, 'list', list.length, list[0]);
-
-              cb(null, list);
-            }
-            else {
-              seneca.fail({code: 'list', tag: args.tag$, store: store.name, query: query, error: err}, cb);
-            }
-          });
-
-        },
-
-
-        /**
-         * delete an item
-         *
-         * params
-         * args - of the form { ent: { id: , ..entitiy data..} }
-         * cb - callback
-         * { 'all$': true }
-         */
-        remove: function(args, cb) {
-          assert(args);
-          assert(cb);
-          assert(args.qent);
-          assert(args.q);
-
-          var qent = args.qent;
-          var q = args.q;
-          var query = deleteStatement(qent, q);
-
-          db.query(query, function(err, result) {
+        } else {
+          stmnt = insertStatement(ent);
+          db.query(stmnt, function(err, result) {
             if (!error(args, err, cb)) {
-              cb(null, result);
+              seneca.log(args.tag$, 'save/insert', result, stmnt);
+              cb(null, ent);
+            } else {
+              seneca.log.error('save/update',err);
             }
           });
+        }
+      },
 
-        },
+      /**
+       * load first matching item based on id
+       * params
+       * args - of the form { ent: { id: , ..entitiy data..} }
+       * cb - callback
+       */
+      load: function(args, cb) {
+        assert(args);
+        assert(cb);
+        assert(args.qent);
+        assert(args.q);
 
-        /**
-         * return the underlying native connection object. Do nothing.
-         */
-        native: function(args, cb) {}
-      };
+        var q = _.clone(args.q);
+        var qent = args.qent;
+        q.limit$ = 1;
+
+        var query = selectStatement(qent, q);
+
+        db.query(query, function(err, res, fields) {
+
+          if (!error(args, err, cb)) {
+            var ent = makeent(qent, res[0]);
+            seneca.log(args.tag$, 'load', ent);
+            cb(null, ent);
+          }
+        });
+      },
+
+      list: function (args, cb) {
+
+        var qent = args.qent;
+        var q = args.q;
+        var list = [];
+
+        var query = selectStatement(qent, q);
+
+        db.query(query, function (err, res) {
+
+          if (!error(query, err, cb)) {
+            res.forEach(function (row) {
+              var ent = makeent(qent, row);
+
+              list.push(ent);
+            });
+            seneca.log(args.tag$, 'list', list.length, list[0]);
+
+            cb(null, list);
+          }
+          else {
+            seneca.fail({code: 'list', tag: args.tag$, store: store.name, query: query, error: err}, cb);
+          }
+        });
+
+      },
 
 
       /**
-       * initialization
+       * delete an item
+       *
+       * params
+       * args - of the form { ent: { id: , ..entitiy data..} }
+       * cb - callback
+       * { 'all$': true }
        */
-      var meta = seneca.store.init(seneca, opts, store);
-      desc = meta.desc;
-      seneca.add({
-        init: store.name,
-        tag: meta.tag
-      }, function(args, done) {
+      remove: function(args, cb) {
+        assert(args);
+        assert(cb);
+        assert(args.qent);
+        assert(args.q);
+
+        var qent = args.qent;
+        var q = args.q;
+        var query = deleteStatement(qent, q);
+
+        db.query(query, function(err, result) {
+          if (!error(args, err, cb)) {
+            cb(null, result);
+          }
+        });
+
+      },
+
+      /**
+       * return the underlying native connection object. Do nothing.
+       */
+      native: function(args, cb) {}
+    };
+
+
+    /**
+     * initialization
+     */
+    var meta = seneca.store.init(seneca, opts, store);
+    desc = meta.desc;
+    seneca.add({init: store.name,tag: meta.tag}, function(args, done) {
         configure(opts, function(err) {
           if (err) {
             return seneca.fail({
@@ -301,10 +298,7 @@ module.exports = function(opts) {
         });
       });
 
-      return {
-        name: store.name,
-        tag: meta.tag
-      };
+    return {name: store.name, tag: meta.tag};
   };
 
 
@@ -490,8 +484,8 @@ module.exports = function(opts) {
         return field ? 1 : 0;
       } else {
         return addquote(field);
-      };
-  }
+      }
+  };
 
   var makeent = function(ent,row) {
 
