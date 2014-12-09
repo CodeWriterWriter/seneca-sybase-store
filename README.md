@@ -7,6 +7,11 @@ Current Version: 0.0.2
 
 Tested on: Node 0.10.32, Seneca 0.5.21
 
+Use
+-----
+
+For using this plugin, please see how the Seneca Data Entities feature works (http://senecajs.org/data-entities.html).
+
 Building
 -----
 This plugin is base on the **node-odbc** module (https://github.com/wankdanker/node-odbc), which

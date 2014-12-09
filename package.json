@@ -1,6 +1,6 @@
 {
   "name": "seneca-sybase-store",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Sybase SQL Anywhere database layer for Seneca framework",
   "main": "sybase-store.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "seneca",
     "sybase",
     "plugin",
-    "sqlanywhere"
+    "ase"
   ],
   "author": "Marco Piraccini",
   "contributors": [
