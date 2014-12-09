@@ -422,7 +422,7 @@ module.exports = function(opts) {
       return query;
     }
 
-    function escape(name) {
+    function addquote(name) {
       return "'" + name + "'";
     }
 
@@ -449,15 +449,15 @@ module.exports = function(opts) {
       }
       else if( _.isDate( ent[field ]) ) {
         type[field] = DATE_TYPE;
-        entp[field] = escape(getSybaseDate(ent[field ]));
+        entp[field] = addquote(getSybaseDate(ent[field ]));
       }
       else if( _.isArray( ent[field] ) ) {
         type[field] = ARRAY_TYPE;
-        entp[field] = escape(JSON.stringify(ent[field]));
+        entp[field] = addquote(JSON.stringify(ent[field]));
       }
       else if( _.isObject( ent[field] ) ) {
         type[field] = OBJECT_TYPE;
-        entp[field] = escape(JSON.stringify(ent[field]));
+        entp[field] = addquote(JSON.stringify(ent[field]));
       }
       // Sybase supports only 1/0
       else if( _.isBoolean( ent[field] ) ) {
@@ -468,12 +468,12 @@ module.exports = function(opts) {
         entp[field] = null;
       }
       else {
-        entp[field] = escape(ent[field]);
+        entp[field] = addquote(ent[field]);
       }
     });
 
     if ( !_.isEmpty(type) ){
-      entp[SENECA_TYPE_COLUMN] = escape(JSON.stringify(type));
+      entp[SENECA_TYPE_COLUMN] = addquote(JSON.stringify(type));
     }
 
     return entp;
@@ -489,7 +489,7 @@ module.exports = function(opts) {
       } else if( _.isBoolean(field) ) {
         return field ? 1 : 0;
       } else {
-        return escape(field);
+        return addquote(field);
       };
   }
 
