@@ -171,7 +171,6 @@ module.exports = function(opts) {
 
           if (update) {
             stmnt = updateStatement(ent);
-            console.log('Update Statement ', stmnt);
             db.query(stmnt, function(err, result) {
               if (!error(args, err, cb)) {
                 seneca.log(args.tag$, 'save/update', result);
@@ -181,10 +180,8 @@ module.exports = function(opts) {
 
           } else {
             stmnt = insertStatement(ent);
-            console.log('Insert Statement ', stmnt);
             db.query(stmnt, function(err, result) {
               if (!error(args, err, cb)) {
-                console.log(' Statement ', result);
                 seneca.log(args.tag$, 'save/insert', result, stmnt);
                 cb(null, ent);
               } else {
@@ -212,7 +209,6 @@ module.exports = function(opts) {
 
           var query = selectStatement(qent, q);
 
-          console.log("Load query", query);
           db.query(query, function(err, res, fields) {
 
             if (!error(args, err, cb)) {
@@ -224,15 +220,12 @@ module.exports = function(opts) {
         },
 
         list: function (args, cb) {
-          console.log("List");
 
           var qent = args.qent;
           var q = args.q;
           var list = [];
 
           var query = selectStatement(qent, q);
-
-          console.log("List query", query);
 
           db.query(query, function (err, res) {
 
@@ -270,9 +263,7 @@ module.exports = function(opts) {
 
           var qent = args.qent;
           var q = args.q;
-          var query = deletestm(qent, q);
-
-          console.log("Delete query", query);
+          var query = deleteStatement(qent, q);
 
           db.query(query, function(err, result) {
             if (!error(args, err, cb)) {
@@ -337,12 +328,12 @@ module.exports = function(opts) {
     var selectStatement = function(qent, q) {
       var table = tablename(qent);
       var params = [];
-      var w = whereargs(makeent(qent), q);
+      var w = whereargs(makeentp(qent), q);
       var wherestr = '';
 
       if (!_.isEmpty(w)) {
         for (var param in w) {
-          params.push(param + ' = ' + escape(w[param]));
+          params.push(param + ' = ' + getWhereCond(w[param]));
         }
         wherestr = " WHERE " + params.join(' AND ');
       }
@@ -372,7 +363,10 @@ module.exports = function(opts) {
       return mq;
     };
 
-    var deletestm = function(qent, q) {
+    /**
+    * Create a DELETE Statement
+    */
+    var deleteStatement = function(qent, q) {
       var table = tablename(qent);
       var params = [];
       var w = whereargs(makeent(qent), q);
@@ -380,16 +374,12 @@ module.exports = function(opts) {
 
       if (!_.isEmpty(w)) {
         for (var param in w) {
-          params.push(param + ' = ' + escape(w[param]));
+          params.push(param + ' = ' + getWhereCond(w[param]));
         }
         wherestr = " WHERE " + params.join('AND');
       }
 
-      var limistr = '';
-      if (!q.all$) {
-        limistr = ' LIMIT 1';
-      }
-      return "DELETE FROM " + table + wherestr + limistr;
+      return "DELETE FROM " + table + wherestr;
     };
 
     /**
@@ -438,16 +428,14 @@ module.exports = function(opts) {
     }
 
     /**
-    * Sybase date are NOT ISO (see: http://codeverge.com/sybase.sqlanywhere.futures/iso-date-and-time-formats/918947);
+    * Sybase date are NOT ISO!! (see: http://codeverge.com/sybase.sqlanywhere.futures/iso-date-and-time-formats/918947);
     * Must be converted in the form: 'YYYY-MM-DD hh:mm:ss'
     */
     function getSybaseDate(date) {
 
       var myDate  = moment(date);
-      return myDate.format("YYYY-mm-DD hh:mm:ss");
+      return myDate.format("YYYY-MM-DD HH:mm:ss");
     }
-
-
 
   var makeentp = function(ent) {
     var entp   = {};
@@ -455,14 +443,14 @@ module.exports = function(opts) {
     var fields = ent.fields$();
 
     fields.forEach(function(field){
+
       if( _.isNumber( ent[field ]) ) {
         type[field] = NUMBER_TYPE;
         entp[field] = ent[field];
       }
       else if( _.isDate( ent[field ]) ) {
         type[field] = DATE_TYPE;
-        // TODO: Fix!!
-        entp[field] = 'null';
+        entp[field] = escape(getSybaseDate(ent[field ]));
       }
       else if( _.isArray( ent[field] ) ) {
         type[field] = ARRAY_TYPE;
@@ -491,6 +479,20 @@ module.exports = function(opts) {
 
     return entp;
   };
+
+  /**
+   * With numbers we must NOT use ' around where condition params.
+   */
+  var getWhereCond = function(field) {
+
+      if( _.isNumber(field) ) {
+        return field;
+      } else if( _.isBoolean(field) ) {
+        return field ? 1 : 0;
+      } else {
+        return escape(field);
+      };
+  }
 
   var makeent = function(ent,row) {
 

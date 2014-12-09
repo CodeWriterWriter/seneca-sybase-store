@@ -42,7 +42,7 @@ setuser 'dbo'
 go
 create table foo (id varchar(255) not null, p1 varchar(255) null, p2 varchar(255) null, p3 varchar(255) null, seneca VARCHAR(255)  null)
 
-create table moon_bar (id  varchar not null,
+create table moon_bar (id  varchar(255) not null,
         str varchar(255) null,
         int INT null,
         bol BIT,
