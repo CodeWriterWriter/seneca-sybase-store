@@ -14,9 +14,9 @@ For using this plugin, please see how the Seneca Data Entities feature works (ht
 
 Building
 -----
-This plugin is base on the **node-odbc** module (https://github.com/wankdanker/node-odbc), which
-is communicates with the native ODBC layer, and thus requires native compilation. Native compilation is managed by **node-gyp**. (https://github.com/TooTallNate/node-gyp). Please see that project for additional prerequisites including Python 2.7, and C/C++ tool chain.
- See these module requirements for the correct build and further requirements.
+This plugin is base on the **node-odbc** module (https://github.com/wankdanker/node-odbc), which communicates using the native ODBC layer, and thus requires native compilation. Native compilation is managed by **node-gyp**. (https://github.com/TooTallNate/node-gyp). Please see that project for additional prerequisites (including Python 2.7, and C/C++ tool chain).
+ See the **node-odbc** module for further build requirements (e.g. unixODBC for Linux/OSX).
+ Also, an ODBC driver must be available.
 
 Tests
 -----

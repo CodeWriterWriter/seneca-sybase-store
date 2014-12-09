@@ -6,3 +6,5 @@ Created the github module
 # 0.0.2 2014/12/09
 
 First working version (seneca-store-test passed)
+
+# 0.0.3 2014/12/09
