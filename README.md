@@ -3,27 +3,33 @@ seneca-sybase-store
 
 Sybase database layer for Seneca framework
 
-[------ WORK IN PROGRESS -------]
-
 Current Version: 0.0.1
 
 Tested on: Node 0.10.32, Seneca 0.5.21
 
+Building
+-----
+This plugin is base on the **node-odbc** module (https://github.com/wankdanker/node-odbc), which
+is communicates with the native ODBC layer, and thus requires native compilation. Native compilation is managed by **node-gyp**. (https://github.com/TooTallNate/node-gyp). Please see that project for additional prerequisites including Python 2.7, and C/C++ tool chain.
+ See these module requirements for the correct build and further requirements.
+
 Tests
 -----
 Prerequisite:
-* Must have Adaptive Server Enterprise installed and an ODBC DataSource must be configured.
-* Go to the /scripts directory and setup the test DB by running the schema.sql script in there:
- isql -S SERVERNAME -U sa -i schema.sql
- (replace SERVERNAME with the ASE server).
-* Configure your username/password/database for the DB in the tests.
-* Configure ODBC [TODO]
-* Do this by copying the dbconfig.example.js file in the /test/ directory to dbconfig.mine.js
-* Change the values to match those of your ODBC connection to Sybase ASE
+* Must have Adaptive Server Enterprise installed with a working ODBC DataSource. I'ts possible to download a ASE evaluation copy from here: http://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.infocenter.help.ase.16.0/doc/html/title.html
+* Go to the /scripts directory and setup the test DB by running the schema.sql script in there (replace SERVERNAME with the ASE server and setup the system to correctly execute the ASE isql tool):
+```
+isql -S SERVERNAME -U sa -i schema.sql
+```
+* Setup the ODBC Connection String in `dbconfig.example.js`, for instance if you use FreeTDS (http://www.freetds.org/), the connection String for the test has the form:
+```
+DRIVER={FreeTDS};SERVERNAME=XXXX;DATABASE=senecatest;UID=senecatest;PWD=senecatest;
+```
+(note that in this case the SERVERNAME is the ODBC Server Name, not the ASE Server Name)
 
 Notes
 -----
-See here for the ODBC error codes: http://msdn.microsoft.com/en-us/library/ms714687.aspx
+See here for the full ODBC error codes reference: http://msdn.microsoft.com/en-us/library/ms714687.aspx
 
 Acknowledgements
 ----------------
