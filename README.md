@@ -27,6 +27,11 @@ DRIVER={FreeTDS};SERVERNAME=XXXX;DATABASE=senecatest;UID=senecatest;PWD=senecate
 ```
 (note that in this case the SERVERNAME is the ODBC Server Name, not the ASE Server Name)
 
+* Execute the tests using
+```
+npm test
+```
+
 Notes
 -----
 See here for the full ODBC error codes reference: http://msdn.microsoft.com/en-us/library/ms714687.aspx

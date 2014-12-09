@@ -280,7 +280,6 @@ module.exports = function(opts) {
       };
 
 
-
       /**
        * initialization
        */
