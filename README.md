@@ -3,7 +3,7 @@ seneca-sybase-store
 
 Sybase database layer for Seneca framework
 
-Current Version: 0.0.1
+Current Version: 0.0.2
 
 Tested on: Node 0.10.32, Seneca 0.5.21
 
