@@ -22,7 +22,6 @@ var DATE_TYPE = 'd';
 var BOOLEAN_TYPE   = 'b';
 var NUMBER_TYPE   = 'n';
 
-
 module.exports = function(opts) {
 
     var seneca = this;
@@ -93,8 +92,6 @@ module.exports = function(opts) {
     function configure(spec, cb) {
       assert(spec);
       assert(cb);
-
-      console.log("*************");
 
       // If spec is a "string" -> ok, otherwise spec is an Object
       // and we use the "connection" property
@@ -213,7 +210,7 @@ module.exports = function(opts) {
           var qent = args.qent;
           q.limit$ = 1;
 
-          var query = selectstm(qent, q);
+          var query = selectStatement(qent, q);
 
           console.log("Load query", query);
           db.query(query, function(err, res, fields) {
@@ -227,28 +224,32 @@ module.exports = function(opts) {
         },
 
         list: function (args, cb) {
-        //   [TODO]
-/*
-          var qent = args.qent
-          var q = args.q
+          console.log("List");
 
-          var list = []
+          var qent = args.qent;
+          var q = args.q;
+          var list = [];
 
-          var query = selectstm(qent, q)
+          var query = selectStatement(qent, q);
+
+          console.log("List query", query);
 
           db.query(query, function (err, res) {
-            if (!error(query, args, err, cb)) {
-              res.rows.forEach(function (row) {
-                var ent = makeent(qent, row)
-                list.push(ent)
-              })
-              seneca.log(args.tag$, 'list', list.length, list[0])
-              cb(null, list)
+
+            if (!error(query, err, cb)) {
+              res.forEach(function (row) {
+                var ent = makeent(qent, row);
+
+                list.push(ent);
+              });
+              seneca.log(args.tag$, 'list', list.length, list[0]);
+
+              cb(null, list);
             }
             else {
-              seneca.fail({code: 'list', tag: args.tag$, store: store.name, query: query, error: err}, cb)
+              seneca.fail({code: 'list', tag: args.tag$, store: store.name, query: query, error: err}, cb);
             }
-          })*/
+          });
 
         },
 
@@ -262,8 +263,6 @@ module.exports = function(opts) {
          * { 'all$': true }
          */
         remove: function(args, cb) {
-          // [TODO]
-/*
           assert(args);
           assert(cb);
           assert(args.qent);
@@ -273,11 +272,13 @@ module.exports = function(opts) {
           var q = args.q;
           var query = deletestm(qent, q);
 
+          console.log("Delete query", query);
+
           db.query(query, function(err, result) {
             if (!error(args, err, cb)) {
               cb(null, result);
             }
-          });*/
+          });
 
         },
 
@@ -331,9 +332,9 @@ module.exports = function(opts) {
     };
 
     /**
-     * Create a select statement for the entity
-     */
-    var selectstm = function(qent, q) {
+    * Create a SELECT Statement
+    */
+    var selectStatement = function(qent, q) {
       var table = tablename(qent);
       var params = [];
       var w = whereargs(makeent(qent), q);
@@ -391,6 +392,9 @@ module.exports = function(opts) {
       return "DELETE FROM " + table + wherestr + limistr;
     };
 
+    /**
+     * Create an UPDATE Statement for the Entity
+     */
     function updateStatement(ent) {
       var setargs = [];
       var values = [];
@@ -489,6 +493,7 @@ module.exports = function(opts) {
   };
 
   var makeent = function(ent,row) {
+
     if (!row) {
       return null;
     }
@@ -501,8 +506,10 @@ module.exports = function(opts) {
       senecatype = JSON.parse( row[SENECA_TYPE_COLUMN] );
     }
 
+
     if( !_.isUndefined(ent) && !_.isUndefined(row) ) {
       fields.forEach(function(field){
+
         if (SENECA_TYPE_COLUMN != field){
           if( _.isUndefined( senecatype[field]) ) {
             entp[field] = row[field];
@@ -518,6 +525,9 @@ module.exports = function(opts) {
           }
           else if (senecatype[field] == BOOLEAN_TYPE){
             entp[field] = ( row[field] == '1' );
+          } else {
+            // Other (numbers)
+            entp[field] = row[field];
           }
         }
       });

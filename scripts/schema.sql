@@ -43,12 +43,12 @@ go
 create table foo (id varchar(255) not null, p1 varchar(255) null, p2 varchar(255) null, p3 varchar(255) null, seneca VARCHAR(255)  null)
 
 create table moon_bar (id  varchar not null,
-        str varchar null,
+        str varchar(255) null,
         int INT null,
         bol BIT,
         wen DATETIME null,
         mark FLOAT null,
-        dec REAL null,
+        dec NUMERIC(10,2) null,
         arr VARCHAR(255) null,
         obj VARCHAR(255) null,
         seneca VARCHAR(125) null)
